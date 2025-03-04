@@ -1,0 +1,25 @@
+{
+  "name": "@rotomeca/jsenumerable",
+  "version": "1.0.0",
+  "description": "Linq in js",
+  "main": "JsEnumerable.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rotomeca/node-jsenumerable.git"
+  },
+  "keywords": [
+    "linq"
+  ],
+  "author": "Rotomeca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rotomeca/node-jsenumerable/issues"
+  },
+  "homepage": "https://github.com/Rotomeca/node-jsenumerable#readme",
+  "dependencies": {
+    "@rotomeca/utils": "^2.0.0"
+  }
+}
