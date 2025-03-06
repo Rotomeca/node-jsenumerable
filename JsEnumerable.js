@@ -381,7 +381,7 @@ class RotomecaGroupedItems {
   }
 
   get_values(try_get_array = true) {
-    if (try_get_array && this.iterable instanceof MelEnumerable) {
+    if (try_get_array && this.iterable instanceof JsEnumerable) {
       if (Array.isArray(this.iterable.generator()))
         return this.iterable.generator();
       else if (
@@ -416,7 +416,7 @@ class RotomecaGroupByGenerator extends ARotomecaKeyValueSelector {
     for (const key in datas) {
       if (Object.hasOwnProperty.call(datas, key)) {
         const element = datas[key];
-        yield new RotomecaGroupedItems(key, MelEnumerable.from(element));
+        yield new RotomecaGroupedItems(key, JsEnumerable.from(element));
       }
     }
   }
@@ -651,7 +651,7 @@ class RotomecaDistinctGenerator extends ARotomecaCallbackGenerator {
 //TO ADD
 class RotomecaExceptGenerator extends ARotomecaItemModifierGenerator {
   constructor(iterable, array) {
-    super(iterable, MelEnumerable.from(array).generator());
+    super(iterable, JsEnumerable.from(array).generator());
   }
 
   *next() {
@@ -721,7 +721,7 @@ class RotomecaReverseGenerator extends RotomecaGenerator {
   }
 
   *next() {
-    let order = MelEnumerable.from(super.next()).toArray();
+    let order = JsEnumerable.from(super.next()).toArray();
 
     for (let len = order.length, index = len - 1; index >= 0; --index) {
       yield order[index];
@@ -750,7 +750,7 @@ class RotomecaTakeGenerator extends ARotomecaItemModifierGenerator {
 class ObjectKeyEnumerable extends RotomecaGenerator {
   constructor(object) {
     super();
-    this.iterable = MelEnumerable.from(this._generate.bind(this, object));
+    this.iterable = JsEnumerable.from(this._generate.bind(this, object));
   }
 
   *_generate(object) {
@@ -765,7 +765,7 @@ class ObjectKeyEnumerable extends RotomecaGenerator {
 
 /**
  * @callback RGenerator
- * @returns {MelEnumerable}
+ * @returns {JsEnumerable}
  */
 
 /**
@@ -776,9 +776,9 @@ class ObjectKeyEnumerable extends RotomecaGenerator {
  * @see {@link https://docs.microsoft.com/en-us/dotnet/api/system.linq}
  * @hideconstructor
  */
-class MelEnumerable {
+class JsEnumerable {
   /**
-   * @param {Generator | Array | MelEnumerable | RotomecaGenerator | JSON} generator
+   * @param {Generator | Array | JsEnumerable | RotomecaGenerator | JSON} generator
    */
   constructor(generator) {
     let _generator = generator;
@@ -803,31 +803,31 @@ class MelEnumerable {
    * Récupère que les éléments dont callback retourne "vrai"
    * @param {WhereCallback} callback Fonction qui servira à tester les éléments
    * @generator
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    */
   where(callback) {
-    return new MelEnumerable(this.generator().where(callback));
+    return new JsEnumerable(this.generator().where(callback));
   }
 
   /**
    * Sélectionne une donnée à partir des éléments de l'énumération
    * @param {SelectCallback} selector
    * @generator
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    */
   select(selector) {
-    return new MelEnumerable(this.generator().select(selector));
+    return new JsEnumerable(this.generator().select(selector));
   }
 
   /**
    * Groupe les données par clé et par valeur.
    * @param {SelectorCallback} key_selector Génère les différentes clés
    * @param {?SelectorCallback} value_selector Génère les différentes valeurs, l'élément entier est pris si null
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   groupBy(key_selector, value_selector = null) {
-    return new MelEnumerable(
+    return new JsEnumerable(
       this.generator().groupBy(key_selector, value_selector),
     );
   }
@@ -835,148 +835,148 @@ class MelEnumerable {
   /**
    * Tri les données (croissant)
    * @param {SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   orderBy(selector) {
-    return new MelEnumerable(this.generator().orderBy(selector));
+    return new JsEnumerable(this.generator().orderBy(selector));
   }
 
   /**
    * Tri les données (décroissant)
    * @param {SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   orderByDescending(selector) {
-    return new MelEnumerable(this.generator().orderByDescending(selector));
+    return new JsEnumerable(this.generator().orderByDescending(selector));
   }
 
   /**
    * Tri les données (croissant), à utiliser après orderBy
    * @param {SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   then(selector) {
-    return new MelEnumerable(this.generator().then(selector));
+    return new JsEnumerable(this.generator().then(selector));
   }
 
   /**
    * Tri les données (décroissant), à utiliser après orderBy
    * @param {SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   thenDescending(selector) {
-    return new MelEnumerable(this.generator().thenDescending(selector));
+    return new JsEnumerable(this.generator().thenDescending(selector));
   }
 
   /**
    * Ajoute un objet à l'énumération
    * @param {*} item
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   add(item) {
-    return new MelEnumerable(this.generator().add(item));
+    return new JsEnumerable(this.generator().add(item));
   }
 
   /**
    * Ajoute un itérable à l'énumération
    * @param {Array | Generator} iterable
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   aggregate(iterable) {
-    return new MelEnumerable(this.generator().aggregate(iterable));
+    return new JsEnumerable(this.generator().aggregate(iterable));
   }
 
   /**
    * Supprime un objet à l'énumération si il est présent
    * @param {*} item
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   remove(item) {
-    return new MelEnumerable(this.generator().remove(item));
+    return new JsEnumerable(this.generator().remove(item));
   }
 
   /**
    * Supprime un objet à un index de l'énumération si il est présent
    * @param {number} index
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   removeAt(index) {
-    return new MelEnumerable(this.generator().removeAt(index));
+    return new JsEnumerable(this.generator().removeAt(index));
   }
 
   /**
    * Empèche d'avoir 2 valeurs identiques dans l'énumération
    * @param {?SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   distinct(selector = null) {
-    return new MelEnumerable(this.generator().distinct(selector));
+    return new JsEnumerable(this.generator().distinct(selector));
   }
 
   /**
    * Empèche d'avoir les valeurs du tableau dans l'énumération
    * @param {any[] | Generator} array
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   except(array) {
-    return new MelEnumerable(this.generator().except(array));
+    return new JsEnumerable(this.generator().except(array));
   }
 
   /**
    * Empèche d'avoir les valeurs en commun du tableau dans l'énumération
    * @param {any[] | Generator} array
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   intersect(array) {
-    return new MelEnumerable(this.generator().intersect(array));
+    return new JsEnumerable(this.generator().intersect(array));
   }
 
   /**
    * Fusionne les 2 tableaux
    * @param {any[] | Generator} array
    * @param {?SelectorCallback} selector
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   union(array, selector = null) {
-    return new MelEnumerable(this.generator().union(array, selector));
+    return new JsEnumerable(this.generator().union(array, selector));
   }
 
   /**
    * Renvoie l'énumération à l'envers
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   reverse() {
-    return new MelEnumerable(this.generator().reverse());
+    return new JsEnumerable(this.generator().reverse());
   }
 
   /**
    * Prend les x premiers éléments
    * @param {number} howMany x premiers éléments à prendre
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   take(howMany) {
-    return new MelEnumerable(this.generator().take(howMany));
+    return new JsEnumerable(this.generator().take(howMany));
   }
 
   /**
    * Retourne vrai si il y a au moins un élément dans l'énumération.
    * @param {?WhereCallback} callback Si défini, éffectue un `where` avant de faire le any.
    * @returns {boolean}
-   * @see {@link MelEnumerable~where}
+   * @see {@link JsEnumerable~where}
    */
   any(callback = null) {
     return this.generator().any(callback);
@@ -986,7 +986,7 @@ class MelEnumerable {
    * Retourne vrai si tout les éléments existent dans l'énumération.
    * @param {?WhereCallback} callback Si défini, éffectue un `where` avant de faire le all.
    * @returns {boolean}
-   * @see {@link MelEnumerable~where}
+   * @see {@link JsEnumerable~where}
    */
   all(callback = null) {
     return this.generator().all(callback);
@@ -1049,11 +1049,11 @@ class MelEnumerable {
 
   /**
    * Si il y a des tableaux dans les tableaux, transforme tout en un seul tableau
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   flat() {
-    return new MelEnumerable(this.generator().flat());
+    return new JsEnumerable(this.generator().flat());
   }
 
   *[Symbol.iterator]() {
@@ -1132,8 +1132,8 @@ class MelEnumerable {
   /**
    * Convertit un objet/un tableau en enumerable
    * @generator
-   * @param {Array | RotomecaGenerator | MelEnumerable | {} | Generator} item Objet à convertir en enumerable
-   * @returns {MelEnumerable}
+   * @param {Array | RotomecaGenerator | JsEnumerable | {} | Generator} item Objet à convertir en enumerable
+   * @returns {JsEnumerable}
    */
   static from(item) {
     const is_array_like = isArrayLike(item);
@@ -1141,26 +1141,26 @@ class MelEnumerable {
       Array.isArray(item) ||
       (typeof item[Symbol.iterator] === 'function' && !is_array_like)
     )
-      return new MelEnumerable(new RotomecaGenerator(item));
-    else if (item instanceof RotomecaGenerator) return new MelEnumerable(item);
+      return new JsEnumerable(new RotomecaGenerator(item));
+    else if (item instanceof RotomecaGenerator) return new JsEnumerable(item);
     else if (typeof item === 'object' && !is_array_like) {
       return this.from(new ObjectKeyEnumerable(item));
     } else if (is_array_like)
-      return new MelEnumerable(new RotomecaGenerator(Array.from(item)));
+      return new JsEnumerable(new RotomecaGenerator(Array.from(item)));
     else if (typeof item === 'function' && !!item.prototype.next)
-      return new MelEnumerable(new RotomecaGenerator(item));
-    else return new MelEnumerable(new RotomecaGenerator([item]));
+      return new JsEnumerable(new RotomecaGenerator(item));
+    else return new JsEnumerable(new RotomecaGenerator([item]));
   }
 
   /**
    * Récupère des éléments au hasard dans un tableau
-   * @param {Array | RotomecaGenerator | MelEnumerable | {} | Generator} item
+   * @param {Array | RotomecaGenerator | JsEnumerable | {} | Generator} item
    * @param  {...any} args Autres objets qui seront pris au hasard
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static choice(item, ...args) {
-    item = MelEnumerable.from(item)
+    item = JsEnumerable.from(item)
       .aggregate(args || [])
       .toArray();
     const min = 0;
@@ -1172,18 +1172,18 @@ class MelEnumerable {
       }
     };
 
-    return MelEnumerable.from(generator);
+    return JsEnumerable.from(generator);
   }
 
   /**
    * Génère les éléments sous forme d'un cycle.
-   * @param {Array | RotomecaGenerator | MelEnumerable | {} | Generator} item Initialisateur
+   * @param {Array | RotomecaGenerator | JsEnumerable | {} | Generator} item Initialisateur
    * @param  {...any} args Initialisateurs
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static cycle(item, ...args) {
-    item = MelEnumerable.from(item)
+    item = JsEnumerable.from(item)
       .aggregate(args || [])
       .toArray();
     let it = 0;
@@ -1196,16 +1196,16 @@ class MelEnumerable {
       }
     };
 
-    return MelEnumerable.from(generator);
+    return JsEnumerable.from(generator);
   }
 
   /**
    * Génère un énumérable vide
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static empty() {
-    return MelEnumerable.from([]);
+    return JsEnumerable.from([]);
   }
 
   /**
@@ -1215,7 +1215,7 @@ class MelEnumerable {
    * @param {number} start Valeur de départ
    * @param {number} count Pendant combien d'itérations ?
    * @param {number} step pas
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static range(start, count, step = 1) {
@@ -1228,7 +1228,7 @@ class MelEnumerable {
       }
     };
 
-    return MelEnumerable.from(generator);
+    return JsEnumerable.from(generator);
   }
 
   /**
@@ -1238,33 +1238,33 @@ class MelEnumerable {
    * @param {number} start Valeur de départ
    * @param {number} count Pendant combien d'itérations ?
    * @param {number} step pas
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static rangeDown(start, count, step = 1) {
-    return MelEnumerable.range(start, count, -step);
+    return JsEnumerable.range(start, count, -step);
   }
 
   /**
    * Génère des valeurs commençant par "start" indéfiniment par pas de "step"
    * @param {number} start Valeur de départ
    * @param {number} step pas
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static toInfinity(start = 0, step = 1) {
-    return MelEnumerable.range(start, Number.POSITIVE_INFINITY, step);
+    return JsEnumerable.range(start, Number.POSITIVE_INFINITY, step);
   }
 
   /**
    * Génère des valeurs commençant par "start" indéfiniment par pas de "step" (décroissant)
    * @param {number} start Valeur de départ
    * @param {number} step pas
-   * @returns {MelEnumerable}
+   * @returns {JsEnumerable}
    * @generator
    */
   static toNegativeInfinity(start = 0, step = 1) {
-    return MelEnumerable.toInfinity(start, -step);
+    return JsEnumerable.toInfinity(start, -step);
   }
 
   static generate(callback) {
@@ -1274,7 +1274,7 @@ class MelEnumerable {
       }
     };
 
-    return MelEnumerable.from(generator);
+    return JsEnumerable.from(generator);
   }
 
   /**
@@ -1285,7 +1285,7 @@ class MelEnumerable {
    * @generator
    */
   static random(min = 0, max = 1000) {
-    return MelEnumerable.generate(() => {
+    return JsEnumerable.generate(() => {
       return Math.random() * (max - min + 1) + min;
     });
   }
@@ -1298,8 +1298,8 @@ class MelEnumerable {
       arr.push(next.value);
     }
 
-    return MelEnumerable.from(arr);
+    return JsEnumerable.from(arr);
   }
 }
 
-module.exports = MelEnumerable;
+module.exports = JsEnumerable;
